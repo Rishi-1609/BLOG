@@ -8,6 +8,7 @@ import blogRoutes from "./routes/blogRoutes";
 import { connectDB } from "./config/database";
 import morgan from "morgan";
 import cors from "cors";
+import { errorHandler } from "./middleware/errorHandler";
 
 const PORT = process.env.PORT;
 
@@ -21,6 +22,8 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
+
+app.use(errorHandler);
 
 console.log("Starting server");
 app.listen(PORT, () => {

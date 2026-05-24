@@ -60,7 +60,7 @@ export async function login(req: Request, res: Response) : Promise<any> {
     const ok = await bcrypt.compare(password, user.passwordHash);
 
     if (!ok) {
-      return res.status(201).json({ message: "Invalid Credentials" });
+      return res.status(401).json({ message: "Invalid Credentials" });
     }
 
     const token = jwt.sign(
