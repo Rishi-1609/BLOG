@@ -7,20 +7,28 @@ export interface AuthRequest extends Request {
 
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const header = req.headers['authorization']
-    if (!header || !header.startsWith('Bearer')) {
-      return res.status(401).json({ message: "Unauthorized User" });
+    const header = req.headers["authorization"];
+    if (!header || !header.startsWith("Bearer")) {
+      res.status(401).json({ message: "Unauthorized User" });
+      return;
     }
-    const token = header.slice('Bearer'.length);
-    const secret = process.env.JWT_SECRET as string;
+    console.log("Checked for empty headers");
+    const token = header.slice('Bearer'.length).trim();
+    console.log("Sliced the header");
+    const secret = process.env.JWT_SECRET;
+    console.log("Secret retrieved from env");
     if (!secret) {
-      return res.status(500).json({message: "Internal Server Error"});
+      res.status(500).json({message: "Internal Server Error"});
+      return;
     }
     const payload = jwt.verify(token, secret) as { userId: string };
+    console.log("JWT verified");
     req.userId = payload.userId;
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    console.error(err);
+    res.status(401).json({ message: "Invalid token" });
+    return;
   }
 }
 

@@ -1,5 +1,7 @@
 import swaggerJsDoc from 'swagger-jsdoc';
 
+const PORT = process.env.PORT;
+
 const options: swaggerJsDoc.Options = {
   definition: {
     openapi: "3.0.0",
@@ -8,7 +10,7 @@ const options: swaggerJsDoc.Options = {
       version: "1.0.0",
       description: "Blog API Project (Basic CRUD using Node JS + TypeScript)"
     },
-    servers: [{ url: `http://localhost:${process.env.PORT}` }],
+    servers: [{ url: `http://localhost:${PORT}` }],
     components: {
       securitySchemes: {
         bearerAuth: {

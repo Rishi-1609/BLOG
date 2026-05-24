@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User'
 
 // register a new user
-export async function register(req: Request, res: Response) {
+export async function register(req: Request, res: Response) : Promise<any> {
   try {
     const { name, email, password } = req.body as {
       name: string,
@@ -19,7 +19,7 @@ export async function register(req: Request, res: Response) {
     const existing = await User.findOne({ email });
 
     if (existing) {
-      return res.status(400).json({ message: "Email alreadz registeres" })
+      return res.status(400).json({ message: "Email already registered" })
     }
 
     const salt = 10;
@@ -39,7 +39,7 @@ export async function register(req: Request, res: Response) {
   }
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response) : Promise<any> {
   try {
 
     const { email, password } = req.body as {

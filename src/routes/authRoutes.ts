@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { register, login } from '../controllers/authControllers';
-import { ResolvePopulatedRawDocType } from 'mongoose';
 
 const router : Router = Router();
 
