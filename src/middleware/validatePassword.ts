@@ -23,3 +23,16 @@ export function validatePassword(req: Request, res: Response, next: NextFunction
         next(err);
     }
 }
+
+export function validateSignInPassword(req: Request, res: Response, next: NextFunction) {
+    const password = req.body.password;
+    try{
+        const required = isRequired(password, "Password", "string");
+        if (!required.valid) 
+            throw new ValidationError(required.msg);
+
+        next();
+    } catch (err) {
+        next(err);
+    }
+}

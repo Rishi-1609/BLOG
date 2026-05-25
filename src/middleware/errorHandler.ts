@@ -1,9 +1,20 @@
-import type { Request, Response, NextFunction } from "express";
-import ValidationError from "../errors/ValidationError";
+import type { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import AppError from "../errors/AppError";
 
-export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
-    res.status(err.statusCode || 500).json({
+export const errorHandler : ErrorRequestHandler = (err, req, res, next) => {
+    if (err instanceof AppError) {
+        res.status(err.statusCode).json({
+            success: false,
+            message: err.message,
+        });
+        return;
+    }
+
+    console.error(err);
+    
+    res.status(500).json({
         success: false,
-        message: err.message || "Internal Server Error",
+        message: "Internal Server Error",
     });
+    return;
 }

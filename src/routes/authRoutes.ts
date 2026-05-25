@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { register, login } from '../controllers/authControllers';
+import { validateRegistrationName } from '../middleware/validateName';
+import { validateRegistrationEmail, validateSignInEmail } from '../middleware/validateEmail';
+import { validatePassword, validateSignInPassword } from '../middleware/validatePassword';
+import { asyncHandler } from '../handlers/asyncHandler';
 
 const router : Router = Router();
 
@@ -32,7 +36,7 @@ const router : Router = Router();
  *        409:
  *          description: Email Already Registered
 * */
-router.post("/register", register);
+router.post("/register", validateRegistrationName, validateRegistrationEmail, validatePassword, asyncHandler(register));
 
 /**
  * @openapi
@@ -59,6 +63,6 @@ router.post("/register", register);
  *        401: 
  *          description: Invalid Credentials
 * */
-router.post("/login", login);
+router.post("/login", validateSignInEmail, validateSignInPassword, asyncHandler(login));
 
 export default router;
