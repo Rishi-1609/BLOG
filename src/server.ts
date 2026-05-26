@@ -1,8 +1,9 @@
 import app from "./app";
 import { connectDB } from "./config/database";
 import { logger } from "./config/pinoLogger";
+import { env } from "./config/env";
 
-const PORT = process.env.PORT || 3000;
+const PORT = env.PORT;
 
 const startServer = async() => {
     try {

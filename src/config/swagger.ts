@@ -1,6 +1,7 @@
 import swaggerJsDoc from 'swagger-jsdoc';
+import { env } from "./env";
 
-const PORT = process.env.PORT;
+const PORT = env.PORT;
 
 const options: swaggerJsDoc.Options = {
   definition: {

@@ -36,7 +36,7 @@ const router: Router = Router();
  *          401: 
  *              description: Unauthorized
  */
-router.post("/", asyncHandler(requireAuth), upload.single("image"), asyncHandler(validateBlog), asyncHandler(createBlog));
+router.post("/", asyncHandler(requireAuth), upload.single("image"), validateBlog, asyncHandler(createBlog));
 
 /**
  * @openapi
@@ -107,7 +107,7 @@ router.get("/:id", asyncHandler(getBlog));
  *          403:
  *              description: Access Forbidden
  */
-router.put("/:id", asyncHandler(requireAuth), upload.single("image"), asyncHandler(validateBlog), asyncHandler(updateBlog));
+router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validateBlog, asyncHandler(updateBlog));
 
 /** 
  * @openapi

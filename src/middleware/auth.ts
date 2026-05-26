@@ -1,9 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import AuthenticationError from '../errors/AuthenticationError';
+import { env } from '../config/env';
 
 export interface AuthRequest extends Request {
-  userId?: string,
+  userId? : string,
 }
 
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) : any {
@@ -13,7 +14,7 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
   
   const token = header.slice('Bearer'.length).trim();
   
-  const secret = process.env.JWT_SECRET;
+  const secret = env.JWT_SECRET;
   
   if (!secret) 
     throw new Error("Internal Server Error");

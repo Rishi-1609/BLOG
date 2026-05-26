@@ -1,4 +1,4 @@
-import User from "../models/User";
+import UserRepository from "../repositories/UserRepository";
 import { ValidationResult } from "./validation";
 
 export function isValidEmail(email: string): ValidationResult {
@@ -9,7 +9,7 @@ export function isValidEmail(email: string): ValidationResult {
 }
 
 export async function isUniqueEmail(email: string) : Promise<ValidationResult> {
-    const existingEmail = await User.findOne({email});
+    const existingEmail = await UserRepository.findUserByEmail(email);
     if (existingEmail) 
         return {success: false, message: "Email already registerd"};
     return {success: true, message: "Email is Unique"};

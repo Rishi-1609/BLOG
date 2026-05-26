@@ -1,4 +1,4 @@
-import { isRequired, ValidationResult } from "./validation";
+import { ValidationResult } from "./validation";
 
 export function isPasswordValidLength(password: string): ValidationResult {
   const minLength = 8;
