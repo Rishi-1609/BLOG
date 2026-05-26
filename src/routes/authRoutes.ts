@@ -3,7 +3,7 @@ import { register, login } from '../controllers/authControllers';
 import { validateRegistrationName } from '../middleware/validateName';
 import { validateRegistrationEmail, validateSignInEmail } from '../middleware/validateEmail';
 import { validatePassword, validateSignInPassword } from '../middleware/validatePassword';
-import { asyncHandler } from '../handlers/asyncHandler';
+import { asyncHandler } from '../utils/asyncHandler';
 
 const router : Router = Router();
 
@@ -36,7 +36,7 @@ const router : Router = Router();
  *        409:
  *          description: Email Already Registered
 * */
-router.post("/register", validateRegistrationName, validateRegistrationEmail, validatePassword, asyncHandler(register));
+router.post("/register", asyncHandler(validateRegistrationName), asyncHandler(validateRegistrationEmail), asyncHandler(validatePassword), asyncHandler(register));
 
 /**
  * @openapi
@@ -63,6 +63,6 @@ router.post("/register", validateRegistrationName, validateRegistrationEmail, va
  *        401: 
  *          description: Invalid Credentials
 * */
-router.post("/login", validateSignInEmail, validateSignInPassword, asyncHandler(login));
+router.post("/login", asyncHandler(validateSignInEmail), asyncHandler(validateSignInPassword), asyncHandler(login));
 
 export default router;

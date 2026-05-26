@@ -2,7 +2,8 @@ import { Router } from "express";
 import { createBlog, listBlogs, getBlog, updateBlog, deleteBlog } from "../controllers/blogControllers";
 import { requireAuth } from "../middleware/auth";
 import upload from "../utils/uploader";
-import { asyncHandler } from "../handlers/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
+import { validateBlog } from "../middleware/validateBlog";
 
 const router: Router = Router();
 
@@ -35,7 +36,7 @@ const router: Router = Router();
  *          401: 
  *              description: Unauthorized
  */
-router.post("/", requireAuth, upload.single("image"), asyncHandler(createBlog));
+router.post("/", asyncHandler(requireAuth), upload.single("image"), asyncHandler(validateBlog), asyncHandler(createBlog));
 
 /**
  * @openapi
@@ -106,7 +107,7 @@ router.get("/:id", asyncHandler(getBlog));
  *          403:
  *              description: Access Forbidden
  */
-router.put("/:id", requireAuth, upload.single("image"), asyncHandler(updateBlog));
+router.put("/:id", asyncHandler(requireAuth), upload.single("image"), asyncHandler(validateBlog), asyncHandler(updateBlog));
 
 /** 
  * @openapi
@@ -130,6 +131,6 @@ router.put("/:id", requireAuth, upload.single("image"), asyncHandler(updateBlog)
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/:id", requireAuth, asyncHandler(deleteBlog));
+router.delete("/:id", asyncHandler(requireAuth), asyncHandler(deleteBlog));
 
 export default router;

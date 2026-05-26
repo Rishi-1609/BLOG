@@ -3,36 +3,34 @@ import ValidationError from "../errors/ValidationError";
 import type { Request, Response, NextFunction } from "express";
 import { hasAllFields, isPasswordValidLength } from "../validators/passwordValidator";
 
-export function validatePassword(req: Request, res: Response, next: NextFunction) {
+export function validatePassword(req: Request, res: Response, next: NextFunction) : any {
     const password = req.body.password;
-    try{
-        const required = isRequired(password, "Password", "string");
-        if (!required.valid) 
-            throw new ValidationError(required.msg);
-
-        const validLength = isPasswordValidLength(password);
-        if (!validLength.valid) 
-            throw new ValidationError(validLength.msg);
-
-        const validPassword = hasAllFields(password);
-        if (!validPassword.valid) 
-            throw new ValidationError(validPassword.msg);
-
-        next();
-    } catch (err) {
-        next(err);
-    }
+    const required = isRequired(password, "Password", "string");
+    
+    if (!required.success) 
+        throw new ValidationError(required.message);
+    
+    const validLength = isPasswordValidLength(password);
+    
+    if (!validLength.success) 
+        throw new ValidationError(validLength.message);
+    
+    const validPassword = hasAllFields(password);
+    
+    if (!validPassword.success) 
+        throw new ValidationError(validPassword.message);
+    
+    next();
+    return;
 }
 
-export function validateSignInPassword(req: Request, res: Response, next: NextFunction) {
+export function validateSignInPassword(req: Request, res: Response, next: NextFunction) : any {
     const password = req.body.password;
-    try{
-        const required = isRequired(password, "Password", "string");
-        if (!required.valid) 
-            throw new ValidationError(required.msg);
-
-        next();
-    } catch (err) {
-        next(err);
-    }
+    const required = isRequired(password, "Password", "string");
+    
+    if (!required.success) 
+        throw new ValidationError(required.message);
+    
+    next();
+    return;
 }

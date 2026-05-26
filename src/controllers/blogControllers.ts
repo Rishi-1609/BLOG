@@ -3,13 +3,11 @@ import Blog from "../models/Blog";
 import type { AuthRequest } from "../middleware/auth";
 import AuthorizationError from "../errors/AuthorizationError";
 import NotFoundError from "../errors/NotFoundError";
+import { createResponse, deleteResponse, successResponse } from "../utils/responseHandler";
 
 export async function createBlog(req: AuthRequest, res: Response) : Promise<any> {
   
   const { title, content } = req.body as { title: string, content: string };
-
-  if (!title || !content) 
-    return res.status(400).json({ message: "Missing fields" });
   
   const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
   
@@ -20,7 +18,7 @@ export async function createBlog(req: AuthRequest, res: Response) : Promise<any>
     author: req.userId,
   });
   
-  return res.status(201).json({ blog });
+  createResponse(res, "Blog Created Successfully", {blog});
 }
 
 // List Blog
@@ -30,7 +28,7 @@ export async function listBlogs(req: AuthRequest, res: Response, next: NextFunct
     .populate('author', 'name email')
     .sort({ createdAt: -1 });
   
-  return res.json(blogs);
+  successResponse(res, "Blogs fetched successfully", {blogs});
 }
 
 // Get Blog by Id
@@ -42,7 +40,7 @@ export async function getBlog(req: AuthRequest, res: Response, next: NextFunctio
   if (!blog) 
     throw new NotFoundError("Blog not found");
   
-  return res.json(blog);
+  successResponse(res, "Blog fetched successfully", {blog});
 }
 
 // Update Blog
@@ -69,7 +67,7 @@ export async function updateBlog(req: AuthRequest, res: Response, next: NextFunc
     blog.imageUrl = `/uploads/${req.file.filename}`;
   
   await blog.save();
-  return res.json({ blog });
+  successResponse(res, "Blog updated successfully", {blog});
 }
 
 // Delete Blog
@@ -85,6 +83,6 @@ export async function deleteBlog(req: AuthRequest, res: Response, next: NextFunc
     throw new AuthorizationError("Access Forbidden");
   
   const deletedBlog = await Blog.findByIdAndDelete(id);
-  return res.status(204).json({ message: `Blog deleted of User_ID: ${id}` });
+  deleteResponse(res, "Blog deleted successfully");
 }
 
