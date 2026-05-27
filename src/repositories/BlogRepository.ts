@@ -2,8 +2,12 @@ import Blog, { IBlog } from "../models/Blog";
 
 export const BlogRepository = {
     createBlog : async function(data : any) {
-        const blog = Blog.create({...data});
+        const blog = await Blog.create({...data});
         return blog;
+    },
+
+    createMultipleBlogs : async function(data: any) {
+        const blogs = await Blog.insertMany(data);
     },
 
     getBlogs : async function() {

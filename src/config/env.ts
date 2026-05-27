@@ -1,7 +1,7 @@
 export function envExists(value: string | undefined, key: string) : string {
 
     if (!value || value.trim().length === 0) 
-        throw new Error(`Environment vaariable missing: ${key}`);
+        throw new Error(`Environment variable missing: ${key}`);
 
     return value;
 }
