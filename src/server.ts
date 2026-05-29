@@ -1,5 +1,5 @@
 import app from "./app";
-import { connectDB } from "./config/database";
+import { connectDB, disconnectDB } from "./config/database";
 import { logger } from "./config/pinoLogger";
 import { env } from "./config/env";
 

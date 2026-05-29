@@ -7,23 +7,23 @@ import mongoose from "mongoose";
 import User from "../models/User";
 import { Blog } from "../models/Blog";
 import { connectDB, disconnectDB } from "../config/database";
-import { error } from "node:console";
+import fs from "fs";
 
-interface SeedUser {
+export interface SeedUser {
     _id : mongoose.Types.ObjectId,
     name : string,
     email : string,
     password : string,
 }
 
-interface SeedBlog {
+export interface SeedBlog {
     title : string,
     content : string,
     imageUrl? : string,
     author? : string,
 }
 
-const userCount = 20;
+const userCount = 150;
 const blogCountForEachUser = 50;
 
 export function createRandomUser() : SeedUser{
@@ -60,7 +60,9 @@ export function generateRandomBlogs(count: number) : SeedBlog[] {
     return blogs;
 }
 
-export const users = generateRandomUsers(userCount);
+async function saveUsersJson(users : SeedUser[]) {
+    await fs.promises.writeFile("users.json", JSON.stringify(users, null, 2));
+}
 
 export async function insertMultipleSeedUsers(users : SeedUser[]) {
     await Promise.all(
@@ -104,19 +106,19 @@ export async function clearDatabase() {
     }
 }
 
-async function seedDatabase() {
+export async function seedDatabase() {
+    const users = generateRandomUsers(userCount);
     try {
         await connectDB();
-        await clearDatabase();
+        //await clearDatabase();
         await insertMultipleSeedUsers(users);
-        await insertSeedBlogs(users);
+        await saveUsersJson(users);
+        //await insertSeedBlogs(users);
         console.log("Database seeded");
-    } catch (err) {
-        console.error("Error while seeding databse: ", err);
+    } catch (error) {
+        console.error("Error while seeding databse: ", error);
         throw error;
     } finally {
         await disconnectDB();
     }
 }
-
-seedDatabase();

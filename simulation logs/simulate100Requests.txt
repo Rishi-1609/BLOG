@@ -1,0 +1,2781 @@
+code : 
+
+import "dotenv/config";
+import fs from "fs/promises";
+import { SeedUser } from "../seedTestingData/seedDatabase";
+import { fetchBlogById, multipleUsersFetchBlogs, simulateAuthenticateUserSession } from "./Scenarios";
+import path from "path";
+
+export async function getUsers() {
+    try {
+        const file = path.join(__dirname, 'users.json');
+        const users = await fs.readFile(file, 'utf-8');
+        return JSON.parse(users) as SeedUser[];
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function runSimulation() {
+    const users = await getUsers();
+    //const authenticatedSessions = await simulateAuthenticateUserSession(users);
+    console.log(users.length);
+    const fetchBlogsResponses = (await multipleUsersFetchBlogs(100))[0];
+    //const blogId = fetchBlogsResponses.responseData.data.blogs[0]._id;
+    //console.log(blogId);
+    //const fetchSingleBlogResponses = await fetchBlogById(blogId, 0.6*users.length);
+}
+
+runSimulation();
+
+
+console : 
+
+rishindra@LAPTOP-HTACR243:~/Projects/Blog$ npm run simulate
+
+> blog@1.0.0 simulate
+> ts-node src/simulation/runner.ts
+
+500
+[TypeError: fetch failed] {
+  [cause]: HeadersTimeoutError: Headers Timeout Error
+      at FastTimer.onParserTimeout [as _onTimeout] (node:internal/deps/undici/undici:7594:32)
+      at Timeout.onTick [as _onTimeout] (node:internal/deps/undici/undici:731:17)
+      at listOnTimeout (node:internal/timers:605:17)
+      at processTimers (node:internal/timers:541:7) {
+    code: 'UND_ERR_HEADERS_TIMEOUT'
+  }
+}
+rishindra@LAPTOP-HTACR243:~/Projects/Blog$ 
+
+
+server : 
+
+rishindra@LAPTOP-HTACR243:~/Projects/Blog$ npm run dev
+
+> blog@1.0.0 dev
+> nodemon --watch src --ext ts,js, --exec "ts-node src/server.ts"
+
+[nodemon] 3.1.14
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): src/**/*
+[nodemon] watching extensions: ts,js
+[nodemon] starting `ts-node src/server.ts`
+◇ injected env (3) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[20:02:15.240] INFO (32152): Database connection established
+[20:02:15.246] INFO (32152): Server listening at http://localhost:3000
+[20:06:34.807] INFO (32152): request completed
+    req: {
+      "id": 6,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43692
+    }
+    res: {
+      "statusCode": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "18373885",
+        "etag": "W/\"1185cfd-Bw8lmh1uZO6++34vQlyXoMH1MsU\""
+      }
+    }
+    responseTime: 250692
+[20:07:24.331] INFO (32152): request completed
+    req: {
+      "id": 14,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43748
+    }
+    res: {
+      "statusCode": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "18373885",
+        "etag": "W/\"1185cfd-Bw8lmh1uZO6++34vQlyXoMH1MsU\""
+      }
+    }
+    responseTime: 300206
+[20:07:49.119] INFO (32152): request completed
+    req: {
+      "id": 19,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43790
+    }
+    res: {
+      "statusCode": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "18373885",
+        "etag": "W/\"1185cfd-Bw8lmh1uZO6++34vQlyXoMH1MsU\""
+      }
+    }
+    responseTime: 324992
+[20:07:53.414] INFO (32152): request completed
+    req: {
+      "id": 33,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43904
+    }
+    res: {
+      "statusCode": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "18373885",
+        "etag": "W/\"1185cfd-Bw8lmh1uZO6++34vQlyXoMH1MsU\""
+      }
+    }
+    responseTime: 329279
+[20:07:53.477] INFO (32152): request aborted
+    req: {
+      "id": 98,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44496
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329301
+[20:07:53.477] INFO (32152): request aborted
+    req: {
+      "id": 97,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44494
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329302
+[20:07:53.477] INFO (32152): request aborted
+    req: {
+      "id": 96,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44484
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329303
+[20:07:53.479] INFO (32152): request aborted
+    req: {
+      "id": 95,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44468
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329305
+[20:07:53.480] INFO (32152): request aborted
+    req: {
+      "id": 94,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44460
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329307
+[20:07:53.480] INFO (32152): request aborted
+    req: {
+      "id": 93,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44446
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329307
+[20:07:53.480] INFO (32152): request aborted
+    req: {
+      "id": 92,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44440
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329308
+[20:07:53.481] INFO (32152): request aborted
+    req: {
+      "id": 91,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44432
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329309
+[20:07:53.481] INFO (32152): request aborted
+    req: {
+      "id": 90,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44428
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329310
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 89,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44420
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329311
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 88,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44414
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329312
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 87,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44408
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329312
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 86,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44396
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329313
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 85,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44386
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329313
+[20:07:53.482] INFO (32152): request aborted
+    req: {
+      "id": 84,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44376
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329314
+[20:07:53.483] INFO (32152): request aborted
+    req: {
+      "id": 83,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44360
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329315
+[20:07:53.483] INFO (32152): request aborted
+    req: {
+      "id": 82,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44344
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329316
+[20:07:53.483] INFO (32152): request aborted
+    req: {
+      "id": 81,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44336
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329316
+[20:07:53.483] INFO (32152): request aborted
+    req: {
+      "id": 80,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44330
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329317
+[20:07:53.484] INFO (32152): request aborted
+    req: {
+      "id": 79,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44314
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329318
+[20:07:53.484] INFO (32152): request aborted
+    req: {
+      "id": 78,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44308
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329318
+[20:07:53.484] INFO (32152): request aborted
+    req: {
+      "id": 77,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44306
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329319
+[20:07:53.484] INFO (32152): request aborted
+    req: {
+      "id": 76,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44300
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329320
+[20:07:53.485] INFO (32152): request aborted
+    req: {
+      "id": 75,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44296
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329321
+[20:07:53.485] INFO (32152): request aborted
+    req: {
+      "id": 74,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44280
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329321
+[20:07:53.485] INFO (32152): request aborted
+    req: {
+      "id": 73,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44274
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329322
+[20:07:53.485] INFO (32152): request aborted
+    req: {
+      "id": 72,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44264
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329323
+[20:07:53.486] INFO (32152): request aborted
+    req: {
+      "id": 71,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44252
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329327
+[20:07:53.486] INFO (32152): request aborted
+    req: {
+      "id": 70,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44240
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329327
+[20:07:53.486] INFO (32152): request aborted
+    req: {
+      "id": 69,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44232
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329328
+[20:07:53.486] INFO (32152): request aborted
+    req: {
+      "id": 68,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44222
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329329
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 67,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44218
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329330
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 66,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44216
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329331
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 65,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44208
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329331
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 64,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44206
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329332
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 63,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44198
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329333
+[20:07:53.487] INFO (32152): request aborted
+    req: {
+      "id": 62,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44182
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329334
+[20:07:53.488] INFO (32152): request aborted
+    req: {
+      "id": 61,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44174
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329335
+[20:07:53.488] INFO (32152): request aborted
+    req: {
+      "id": 60,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44172
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329336
+[20:07:53.488] INFO (32152): request aborted
+    req: {
+      "id": 59,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44156
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329337
+[20:07:53.489] INFO (32152): request aborted
+    req: {
+      "id": 58,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44140
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329338
+[20:07:53.489] INFO (32152): request aborted
+    req: {
+      "id": 57,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44136
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329339
+[20:07:53.489] INFO (32152): request aborted
+    req: {
+      "id": 56,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44122
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329339
+[20:07:53.489] INFO (32152): request aborted
+    req: {
+      "id": 55,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44112
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329340
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 54,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44108
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329341
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 53,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44098
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329342
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 52,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44082
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329342
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 51,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44068
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329343
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 50,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44062
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329344
+[20:07:53.490] INFO (32152): request aborted
+    req: {
+      "id": 49,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44054
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329344
+[20:07:53.491] INFO (32152): request aborted
+    req: {
+      "id": 48,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44040
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329346
+[20:07:53.491] INFO (32152): request aborted
+    req: {
+      "id": 47,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44038
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329346
+[20:07:53.491] INFO (32152): request aborted
+    req: {
+      "id": 46,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44030
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329347
+[20:07:53.491] INFO (32152): request aborted
+    req: {
+      "id": 45,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44022
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329347
+[20:07:53.491] INFO (32152): request aborted
+    req: {
+      "id": 44,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44008
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329348
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 43,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43998
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329349
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 42,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43988
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329350
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 41,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43984
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329352
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 40,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43972
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329353
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 39,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43958
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329354
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 99,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44506
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329315
+[20:07:53.492] INFO (32152): request aborted
+    req: {
+      "id": 37,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43942
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329355
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 36,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43932
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329356
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 35,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43920
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329357
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 34,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43914
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329357
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 4,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43688
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329382
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 32,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43890
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329359
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 31,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43880
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329359
+[20:07:53.493] INFO (32152): request aborted
+    req: {
+      "id": 30,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43878
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329360
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 29,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43868
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329361
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 28,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43858
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329362
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 27,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43846
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329362
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 26,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43842
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329363
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 25,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43828
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329363
+[20:07:53.494] INFO (32152): request aborted
+    req: {
+      "id": 24,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43818
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329364
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 23,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43810
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329365
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 22,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43806
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329366
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 21,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43804
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329366
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 20,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43796
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329367
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 3,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43674
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329386
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 18,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43774
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329368
+[20:07:53.495] INFO (32152): request aborted
+    req: {
+      "id": 17,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43768
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329369
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 16,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43764
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329371
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 15,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43750
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329371
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 2,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43660
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329389
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 13,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43744
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329373
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 12,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43738
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329373
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 11,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43726
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329374
+[20:07:53.496] INFO (32152): request aborted
+    req: {
+      "id": 10,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43720
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329375
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 9,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43712
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329377
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 8,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43710
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329378
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 7,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43702
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329379
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 1,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43648
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329399
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 5,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43690
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329384
+[20:07:53.497] INFO (32152): request aborted
+    req: {
+      "id": 100,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 44522
+    }
+    res: {
+      "statusCode": null,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*"
+      }
+    }
+    responseTime: 329319
+[20:07:53.504] INFO (32152): request completed
+    req: {
+      "id": 38,
+      "method": "GET",
+      "url": "/api/blogs",
+      "query": {},
+      "params": {},
+      "headers": {
+        "host": "127.0.0.1:3000",
+        "connection": "keep-alive",
+        "accept": "*/*",
+        "accept-language": "*",
+        "sec-fetch-mode": "cors",
+        "user-agent": "node",
+        "accept-encoding": "gzip, deflate"
+      },
+      "remoteAddress": "::ffff:127.0.0.1",
+      "remotePort": 43956
+    }
+    res: {
+      "statusCode": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "access-control-allow-origin": "*",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "18373885",
+        "etag": "W/\"1185cfd-Bw8lmh1uZO6++34vQlyXoMH1MsU\""
+      }
+    }
+    responseTime: 329366

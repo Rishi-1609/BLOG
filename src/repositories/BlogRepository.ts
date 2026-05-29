@@ -8,6 +8,7 @@ export const BlogRepository = {
 
     createMultipleBlogs : async function(data: any) {
         const blogs = await Blog.insertMany(data);
+        return blogs;
     },
 
     getBlogs : async function() {

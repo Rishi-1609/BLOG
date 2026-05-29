@@ -1,3 +1,6 @@
 .env
 node_modules/
 repomix-output.xml
+users.json
+saveSeedUsers.ts
+simulationCodebase.xml

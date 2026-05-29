@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "seedUser" : "ts-node src/seedTestingData/seedDatabase.ts",
+    "simulate" : "ts-node src/simulation/runner.ts",
+    "seedDatabase" : "ts-node src/seedTestingData/seedRunner.ts",
     "dev": "nodemon --watch src --ext ts,js, --exec \"ts-node src/server.ts\"",
     "build": "tsc",
     "start": "node dist/server.js",
