@@ -4,3 +4,7 @@ repomix-output.xml
 users.json
 saveSeedUsers.ts
 simulationCodebase.xml
+oldVersions/
+oldVersions/validations/
+oldVersions/validations/middlewares
+simulation_logs/

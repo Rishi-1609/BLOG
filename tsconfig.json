@@ -19,10 +19,11 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "oldVersions"
   ]
 }

@@ -27,12 +27,12 @@ export const AuthUser = {
         const user = await UserRepository.findUserByEmail(data.email);
         
         if (!user) 
-            throw new AuthenticationError("Invalid Email");
+            throw new AuthenticationError("Invalid Credentials");
 
         const ok = await bcrypt.compare(data.password, user.passwordHash);
 
         if (!ok) 
-            throw new AuthenticationError("Invalid Email");
+            throw new AuthenticationError("Invalid Credentials");
 
         const userData : UserDatabaseDetails = {
             user_Id : String(user._id),

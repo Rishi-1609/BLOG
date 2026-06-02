@@ -2,10 +2,14 @@ import { BlogUpdateRequest } from "../config/blogRequestInterface";
 import AuthorizationError from "../errors/AuthorizationError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { BlogRepository } from "../repositories/BlogRepository"
+import { BlogIdInput } from "../validators/blog/blogId.schema";
+import { CreateBLogInput } from "../validators/blog/createBlog.schema";
+import { DeleteBlogInput } from "../validators/blog/deleteBlog.schema";
+import { UpdateBlogInput } from "../validators/blog/updateBlog.schema";
 
 export const BlogServices = {
 
-    blogCreation : async function (data : any) {
+    blogCreation : async function (data : CreateBLogInput) {
         const blog = await BlogRepository.createBlog(data);
         return blog;
     },
@@ -15,14 +19,14 @@ export const BlogServices = {
         return blogs;
     },
 
-    fetchBlogById : async function (id : string) {
-        const blog = await BlogRepository.getBlogById(id);
+    fetchBlogById : async function (blogIdRequest : BlogIdInput) {
+        const blog = await BlogRepository.getBlogById(blogIdRequest.id);
         if (!blog) 
             throw new NotFoundError("Blog not found");
         return blog;
     },
 
-    updateBlogById : async function (data : BlogUpdateRequest) {
+    updateBlogById : async function (data : UpdateBlogInput) {
         const blog = await BlogRepository.getBlogById(data.blog_Id);
         if (!blog) 
             throw new NotFoundError("Blog not found");
@@ -37,7 +41,7 @@ export const BlogServices = {
         return blog;
     },
 
-    deleteBlogById : async function (data : any) {
+    deleteBlogById : async function (data : DeleteBlogInput) {
         const blog = await BlogRepository.getBlogById(data.blog_Id);
         if (!blog) 
             throw new NotFoundError("Blog not found");

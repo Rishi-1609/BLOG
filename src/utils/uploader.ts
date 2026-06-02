@@ -1,6 +1,7 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { Request } from "express";
 
 const uploadsDir = path.join(process.cwd(), "uploads");
 
@@ -9,13 +10,13 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
+  destination: (_req : Request, _file, cb) => {
     cb(null, uploadsDir)
   },
-  filename: (_req, file, cb) => {
+  filename: (_req : Request, file, cb) => {
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const ext = path.extname(file.originalname);
-    cb(null, `${file.filename}-${uniqueSuffix}${ext}`);
+    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
   },
 });
 

@@ -3,7 +3,9 @@ import { createBlog, listBlogs, getBlog, updateBlog, deleteBlog } from "../contr
 import { requireAuth } from "../middleware/auth";
 import upload from "../utils/uploader";
 import { asyncHandler } from "../utils/asyncHandler";
-import { validateBlog } from "../middleware/validateBlog";
+import { updateBlogSchema } from "../validators/blog/updateBlog.schema";
+import { validate } from "../middleware/validate.middleware";
+import { createBlogSchema } from "../validators/blog/createBlog.schema";
 
 const router: Router = Router();
 
@@ -36,7 +38,7 @@ const router: Router = Router();
  *          401: 
  *              description: Unauthorized
  */
-router.post("/", asyncHandler(requireAuth), upload.single("image"), validateBlog, asyncHandler(createBlog));
+router.post("/", asyncHandler(requireAuth), upload.single("image"), validate(createBlogSchema), asyncHandler(createBlog));
 
 /**
  * @openapi
@@ -107,7 +109,7 @@ router.get("/:id", asyncHandler(getBlog));
  *          403:
  *              description: Access Forbidden
  */
-router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validateBlog, asyncHandler(updateBlog));
+router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validate(updateBlogSchema), asyncHandler(updateBlog));
 
 /** 
  * @openapi

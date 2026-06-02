@@ -33,7 +33,7 @@ export async function listBlogs(req: AuthRequest, res: Response, next: NextFunct
 export async function getBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
   
   const { id } = req.params as {id: string};
-  const blog = await BlogServices.fetchBlogById(id);
+  const blog = await BlogServices.fetchBlogById({id});
   
   successResponse(res, "Blog fetched successfully", {blog});
 }
