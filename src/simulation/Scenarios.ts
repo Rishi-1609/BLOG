@@ -27,12 +27,12 @@ export async function register(user : SeedUser) {
 export async function simulateAuthenticateUserSession(users : SeedUser[]) {
     const AuthenticatedSessions  = await Promise.all(
         users.map(async (user) => {
-            const token = await login(user);
+            const response = await login(user);
             return {
                 userId : String(user._id),
                 email : user.email,
-                token : token.responseData.data.token,
-                responseBody : token,
+                token : response.responseData.data.token,
+                responseBody : response,
             }
         })
     );

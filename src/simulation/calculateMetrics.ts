@@ -1,8 +1,6 @@
 import { simulationResponse } from "./simulationResponseInterface";
 
 export function calculateMetrics(responses : simulationResponse[], duration : number) {
-
-    console.log(responses[0]);
     
     // Latency Calculation
     const durations = responses.map(response => response.durationMs);

@@ -6,8 +6,20 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { updateBlogSchema } from "../validators/blog/updateBlog.schema";
 import { validate } from "../middleware/validate.middleware";
 import { createBlogSchema } from "../validators/blog/createBlog.schema";
+import rateLimit from "express-rate-limit";
+import { rateLimitErrorFunction } from "../errors/RateLimitError";
 
 const router: Router = Router();
+
+const limiter = rateLimit({
+    windowMs : 15*60*1000,
+    limit : 100,
+    standardHeaders : 'draft-8',
+    legacyHeaders : false,
+    message : "Too many requests. Try again later",
+});
+
+router.use(limiter);
 
 /**
  * @openapi

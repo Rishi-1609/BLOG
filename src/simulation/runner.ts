@@ -20,7 +20,7 @@ export async function getUsers() {
     }
 }
 
-export async function analyzeAuthAPI(fn : any, data : any) {
+export async function analyzeAuthAPI(fn : any, data : SeedUser[]) {
     const scenarioStart = performance.now();
     const responses = await fn(data);
     const scenarioDuration = performance.now() - scenarioStart;
@@ -42,8 +42,8 @@ export async function analyzeFetchAllBlogsAPI(fn : any, count : number) {
 
 export async function runSimulation() {
     const users = await getUsers();
-    //const authenticatedSessions = await analyzeAuthAPI(simulateAuthenticateUserSession, users);
-    const fetchBlogsResponses = (await analyzeFetchAllBlogsAPI(multipleUsersFetchBlogs, 50))[0];
+    const authenticatedSessions = await analyzeAuthAPI(simulateAuthenticateUserSession, users.slice(0,11));
+    //const fetchBlogsResponses = (await analyzeFetchAllBlogsAPI(multipleUsersFetchBlogs, 50))[0];
     //const blogId = fetchBlogsResponses.responseData.data.blogs[0]._id;
     //console.log(blogId);
     //const fetchSingleBlogResponses = await fetchBlogById(blogId, 0.6*users.length);

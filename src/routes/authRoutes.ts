@@ -4,8 +4,25 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { validate } from '../middleware/validate.middleware';
 import { registerSchema } from '../validators/auth/register.schema';
 import { loginSchema } from '../validators/auth/login.schema';
+import rateLimit from 'express-rate-limit';
+import { rateLimitErrorFunction } from '../errors/RateLimitError';
+import { success } from 'zod';
 
 const router : Router = Router();
+
+const limiter = rateLimit({
+    windowMs : 15*60*1000,
+    limit : 10,
+    standardHeaders : 'draft-8',
+    legacyHeaders : false,
+    message : {
+        success : false,
+        statusCode : 429,
+        message : "Too many requests. Try again later",
+    },
+});
+
+router.use(limiter);
 
 /**
  * @openapi

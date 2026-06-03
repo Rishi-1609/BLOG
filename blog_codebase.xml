@@ -1,0 +1,1960 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+src/
+  config/
+    blogRequestInterface.ts
+    database.ts
+    env.ts
+    pinoLogger.ts
+    swagger.ts
+    userRequestInterface.ts
+  controllers/
+    authControllers.ts
+    blogControllers.ts
+  errors/
+    AppError.ts
+    AuthenticationError.ts
+    AuthorizationError.ts
+    MongoError.ts
+    NotFoundError.ts
+    ValidationError.ts
+  middleware/
+    auth.ts
+    errorMiddleware.ts
+    requestLogger.ts
+    validate.middleware.ts
+  models/
+    Blog.ts
+    User.ts
+  repositories/
+    BlogRepository.ts
+    UserRepository.ts
+  routes/
+    authRoutes.ts
+    blogRoutes.ts
+  seedTestingData/
+    seedDatabase.ts
+    seedRunner.ts
+  services/
+    AuthUser.ts
+    BlogServices.ts
+    jwtSignature.ts
+  simulation/
+    AuthRequests.ts
+    BlogRequests.ts
+    calculateMetrics.ts
+    runner.ts
+    ScenarioMetrics.ts
+    Scenarios.ts
+    simulationResponseInterface.ts
+    UserSession.ts
+  utils/
+    asyncHandler.ts
+    responseHandler.ts
+    uploader.ts
+  validators/
+    auth/
+      login.schema.ts
+      register.schema.ts
+    blog/
+      blogId.schema.ts
+      createBlog.schema.ts
+      deleteBlog.schema.ts
+      updateBlog.schema.ts
+    fields/
+      content.schema.ts
+      email.schema.ts
+      image.schema.ts
+      name.schema.ts
+      objectId.schema.ts
+      password.schema.ts
+      title.schema.ts
+  app.ts
+  server.ts
+.gitignore
+package.json
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/config/blogRequestInterface.ts">
+export interface BlogUpdateRequest {
+    blog_Id : string,
+    user_Id : string,
+    title : string, 
+    content : string,
+    imageUrl? : string,
+    fileName? : string,
+}
+</file>
+
+<file path="src/config/pinoLogger.ts">
+import pino from "pino";
+
+export const logger = pino({
+    level: "info",
+    transport : {
+        target : "pino-pretty",
+    },
+})
+
+export default logger;
+</file>
+
+<file path="src/config/userRequestInterface.ts">
+export interface UserRequest {
+    name : string,
+    email : string,
+};
+
+export interface UserRegistrationRequest extends UserRequest {
+    password : string,
+}
+
+export type UserLoginRequest = Omit<UserRegistrationRequest, "name">;
+
+export interface UserDatabaseDetails extends UserRequest {
+    user_Id : string,
+}
+</file>
+
+<file path="src/errors/AppError.ts">
+export class AppError extends Error {
+    statusCode: number;
+
+    constructor(message: string, statusCode: number) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+}
+
+export default AppError;
+</file>
+
+<file path="src/errors/AuthenticationError.ts">
+import AppError from "./AppError";
+
+export class AuthenticationError extends AppError {
+    constructor(message: string) {
+        super(message, 401);
+    }
+}
+
+export default AuthenticationError;
+</file>
+
+<file path="src/errors/AuthorizationError.ts">
+import AppError from "./AppError";
+
+export class AuthorizationError extends AppError {
+    constructor(message: string) {
+        super(message, 403);
+    }
+}
+
+export default AuthorizationError;
+</file>
+
+<file path="src/errors/MongoError.ts">
+import AppError from "./AppError";
+
+export class MongoError extends AppError {
+    constructor(message: string) {
+        super(message, 500);
+    }
+}
+</file>
+
+<file path="src/errors/NotFoundError.ts">
+import AppError from "./AppError";
+
+export class NotFoundError extends AppError {
+    constructor(message: string) {
+        super(message, 404);
+    }
+}
+
+export default NotFoundError;
+</file>
+
+<file path="src/middleware/requestLogger.ts">
+import { pinoHttp } from "pino-http";
+import logger from "../config/pinoLogger";
+
+export const requestLogger = pinoHttp({
+    logger,
+});
+</file>
+
+<file path="src/middleware/validate.middleware.ts">
+import { NextFunction, Request, Response } from "express";
+import { ZodTypeAny, ZodError } from "zod";
+import ValidationError from "../errors/ValidationError";
+
+export const validate = (schema : ZodTypeAny) => {
+    return (req: Request, res : Response, next : NextFunction) => {
+        try {
+            schema.parse({
+                body : req.body,
+                params : req.params,
+                query : req.query,
+            });
+
+            next();        
+        } catch (error) {
+            if (error instanceof ZodError) {
+                throw new ValidationError(
+                    JSON.stringify(
+                        error.issues.map(issue => ({
+                            field : issue.path.join("."),
+                            message : issue.message,
+                        }))
+                    )
+                );
+            }
+        }
+    }
+}
+</file>
+
+<file path="src/models/User.ts">
+import mongoose, { Schema, Document, Model } from 'mongoose';
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema: Schema<IUser> = new Schema<IUser>(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, index: true },
+    passwordHash: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
+
+export default User;
+</file>
+
+<file path="src/repositories/UserRepository.ts">
+import User from "../models/User";
+
+export const UserRepository = {
+    
+    createUser : async function (data : any) : Promise<any> {
+        const user = await User.create({...data});
+        return user;
+    },
+
+    findUserByEmail : async function (email : string) : Promise<any> {
+        const user = await User.findOne({ email });
+        return user;
+    }
+
+};
+
+export default UserRepository;
+</file>
+
+<file path="src/seedTestingData/seedRunner.ts">
+import { seedDatabase } from "./seedDatabase";
+
+seedDatabase();
+</file>
+
+<file path="src/services/jwtSignature.ts">
+import { env } from "../config/env";
+import { UserDatabaseDetails } from "../config/userRequestInterface";
+import jwt from "jsonwebtoken";
+
+export function jwtSign(data : UserDatabaseDetails) {
+    const token = jwt.sign(
+        data, 
+        env.JWT_SECRET,
+        {expiresIn : "7d"},
+    );
+
+    return token;
+}
+</file>
+
+<file path="src/simulation/AuthRequests.ts">
+import { UserLoginRequest, UserRegistrationRequest } from "../config/userRequestInterface";
+import { simulationResponse } from "./simulationResponseInterface";
+
+export async function registerUser(url : string, data : UserRegistrationRequest) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {
+        const response = await fetch(`${url}`, {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(data),
+        }); 
+        const responseData = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+
+export async function loginUser(url : string, data : UserLoginRequest) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {
+        const response = await fetch(`${url}`, {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(data),
+        }); 
+        const responseData = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+</file>
+
+<file path="src/simulation/BlogRequests.ts">
+import { createRandomBlog } from "../seedTestingData/seedDatabase";
+import { simulationResponse } from "./simulationResponseInterface";
+
+export async function fetchBlogLists(url : string) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {
+        const response = await fetch(`${url}`); 
+        const data = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData : data,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+
+export async function fetchBlog (url : string, id : string) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {
+        const response = await fetch(`${url}/${id}`); 
+        const data = await response.json();
+        return {
+                success : response.ok,
+                status : response.status,
+                responseData : data,
+                durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+
+export async function createBlog (url : string, token? : string) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {
+        const blogData = createRandomBlog();
+        const response = await fetch(`${url}`, {
+            method : "POST",
+            headers : {
+                "Authorization" : `Bearer ${token}`,
+                "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(blogData),
+        }); 
+        const data = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData : data,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+
+export async function updateBlog(url : string, id : string, token? : string) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {    
+        const updatedData = createRandomBlog();
+        const response = await fetch(`${url}/${id}`, {
+            method : "PUT",
+            headers : {
+                "Authorization" : `Bearer ${token}`,
+                "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(updatedData),
+        }); 
+        const data = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData : data,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+
+export async function deleteBlog(url : string, id : string, token? : string) : Promise<simulationResponse>{
+    const start = performance.now();
+    try {    
+        const response = await fetch(`${url}/${id}`, {
+            method : "DELETE",
+            headers : {
+                "Authorization" : `Bearer ${token}`,
+                "Content-Type" : "application/json",
+            },
+        }); 
+        const data = await response.json();
+        return {
+            success : response.ok,
+            status : response.status,
+            responseData : data,
+            durationMs : performance.now() - start,
+        };
+    } catch (error) {
+        return {
+            success : false,
+            status : 0,
+            durationMs : performance.now() - start,
+            error : String(error),
+        };
+    }
+}
+</file>
+
+<file path="src/simulation/calculateMetrics.ts">
+import { simulationResponse } from "./simulationResponseInterface";
+
+export function calculateMetrics(responses : simulationResponse[], duration : number) {
+
+    console.log(responses[0]);
+    
+    // Latency Calculation
+    const durations = responses.map(response => response.durationMs);
+    const min = Math.min(...durations);
+    const max = Math.max(...durations);
+    const avg = (durations.reduce((a, b) => a+b, 0)/durations.length);
+
+    durations.sort((a,b) => a-b);
+
+    const p50 = durations[Math.floor(durations.length * 0.50)];
+    const p95 = durations[Math.floor(durations.length * 0.95)];
+    const p99 = durations[Math.floor(durations.length * 0.99)];
+    
+    const successCount = responses.filter(response => response.success).length;
+    const failureCount = responses.length - successCount;
+    const rps = responses.length / (duration / 1000);
+
+    return {
+        Metric : "Seconds / Count",
+        scenarioDuration : duration,
+
+        totalRequests : responses.length,
+        successCount : successCount,
+        failureCount : failureCount,
+
+        minLatency : min,
+        avgLatency : avg,
+        maxLatency : max,
+
+        p50 : p50,
+        p95 : p95,
+        p99 : p99,
+
+        requestsPerSecond : rps,
+    }
+}
+</file>
+
+<file path="src/simulation/runner.ts">
+import "dotenv/config";
+import fs from "fs/promises";
+import { SeedUser } from "../seedTestingData/seedDatabase";
+import { fetchBlogById, multipleUsersFetchBlogs, simulateAuthenticateUserSession } from "./Scenarios";
+import path from "path";
+import { calculateMetrics } from "./calculateMetrics";
+import { ScenarioMetrics } from "./ScenarioMetrics";
+
+export function printMetrics (data : any) {
+    console.log(data);
+}
+
+export async function getUsers() {
+    try {
+        const file = path.join(__dirname, 'users.json');
+        const users = await fs.readFile(file, 'utf-8');
+        return JSON.parse(users) as SeedUser[];
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function analyzeAuthAPI(fn : any, data : any) {
+    const scenarioStart = performance.now();
+    const responses = await fn(data);
+    const scenarioDuration = performance.now() - scenarioStart;
+    const simulationResponses = responses.map((response: { responseBody: any; }) => response.responseBody);
+    const metrics = calculateMetrics(simulationResponses, scenarioDuration);
+    printMetrics(metrics);
+    return responses;
+}
+
+export async function analyzeFetchAllBlogsAPI(fn : any, count : number) {
+    const scenarioStart = performance.now();
+    const responses = await fn(count);
+    const scenarioDuration = performance.now() - scenarioStart;
+    const simulationResponses = responses//.map((response: { responseBody: any; }) => response.responseBody);
+    const metrics = calculateMetrics(simulationResponses, scenarioDuration);
+    printMetrics(metrics);
+    return responses;
+}
+
+export async function runSimulation() {
+    const users = await getUsers();
+    //const authenticatedSessions = await analyzeAuthAPI(simulateAuthenticateUserSession, users);
+    const fetchBlogsResponses = (await analyzeFetchAllBlogsAPI(multipleUsersFetchBlogs, 50))[0];
+    //const blogId = fetchBlogsResponses.responseData.data.blogs[0]._id;
+    //console.log(blogId);
+    //const fetchSingleBlogResponses = await fetchBlogById(blogId, 0.6*users.length);
+}
+
+runSimulation();
+</file>
+
+<file path="src/simulation/ScenarioMetrics.ts">
+export interface ScenarioMetrics {
+
+    scenarioDuration? : number,
+
+    totalRequests : number,
+    successCount : number,
+    failureCount : number,
+
+    minLatency : number,
+    avgLatency : number,
+    maxLatency : number,
+
+    p50 : number,
+    p95 : number,
+    p99 : number,
+
+    requestsPerSecond? : number,
+}
+</file>
+
+<file path="src/simulation/Scenarios.ts">
+import { SeedUser } from "../seedTestingData/seedDatabase";
+import { env } from "../config/env";
+import { loginUser, registerUser } from "./AuthRequests";
+import { UserSession } from "./UserSession";
+import { createBlog, fetchBlog, fetchBlogLists } from "./BlogRequests";
+import { simulationResponse } from "./simulationResponseInterface";
+
+const url = `http://127.0.0.1:${env.PORT}`;
+const apiUser = `${url}/api/auth`;
+const apiBlog = `${url}/api/blogs`;
+
+// Login API call
+export async function login(user : SeedUser) : Promise<simulationResponse>{
+    const credentials = {email : user.email, password : user.password};
+    const response = await loginUser(`${apiUser}/login/`, credentials);
+    return response;
+}
+
+// Register API call
+export async function register(user : SeedUser) {
+    const credentials = {name : user.name, email : user.email, password : user.password};
+    const response = await registerUser(`${apiUser}/register/`, credentials);
+    const responseSuccess = response;
+    return responseSuccess;
+}
+
+export async function simulateAuthenticateUserSession(users : SeedUser[]) {
+    const AuthenticatedSessions  = await Promise.all(
+        users.map(async (user) => {
+            const token = await login(user);
+            return {
+                userId : String(user._id),
+                email : user.email,
+                token : token.responseData.data.token,
+                responseBody : token,
+            }
+        })
+    );
+    return AuthenticatedSessions;
+}
+
+export async function fetchBlogs(blogId? : string) {
+    let response;
+    if (!blogId) {
+        response = await fetchBlogLists(`${apiBlog}`);
+    } else {
+        response = await fetchBlog(apiBlog, blogId);
+    }
+    return response;
+}
+
+export async function multipleUsersFetchBlogs(count : number) {
+    let arr = [];
+    for (let i = 0; i < count; ++i){
+        arr.push(fetchBlogs);
+    }
+    const fetchBlogsResponses = await Promise.all (
+        arr.map(async (fn) => {
+            const success = await fn();
+            return success;
+        })
+    );
+    return fetchBlogsResponses;
+}
+
+export async function fetchBlogById(blogId : string, count? : number) {
+    let arr = [];
+    arr.push(fetchBlogs);
+    for (let i = 1; count && i < count; ++i){
+        arr.push(fetchBlogs);
+    }
+    const fetchBlogResponses = await Promise.all (
+        arr.map(async (fn) => {
+            const success = await fn(blogId);
+            return success;
+        })
+    );
+    return fetchBlogResponses;
+}
+
+export async function BlogCreation(user : UserSession) {
+    let token;
+    token = (Math.random() > 0.7) ? user.token : '';
+    const response = await createBlog(`${apiBlog}`, token);
+    return response.success;
+}
+
+export async function simulateMultipleBlogCreation(users : UserSession[]) {
+    let arr = [];
+    for (const user of users) {
+        arr.push({
+            fn : BlogCreation,
+            user : user,
+        });
+    }
+    const createBlogResponses = await Promise.all(
+        arr.map(async (args) => {
+            const success = await args.fn(args.user);
+            return success;
+        })
+    )
+    return createBlogResponses;
+}
+</file>
+
+<file path="src/simulation/simulationResponseInterface.ts">
+export interface simulationResponse {
+    success : boolean,
+    status : number,
+    responseData? : any,
+    durationMs : number,
+    error? : string,
+};
+</file>
+
+<file path="src/simulation/UserSession.ts">
+export interface UserSession {
+    userId : string,
+    email : string,
+    token : string,
+    ownedBlogs?: string[],
+}
+</file>
+
+<file path="src/utils/asyncHandler.ts">
+import { Request, Response, NextFunction } from "express";
+
+
+export function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+
+    return async function(req: Request, res: Response, next: NextFunction) {
+        return Promise.resolve(fn(req, res, next)).catch((err) => next(err));
+    };
+}
+</file>
+
+<file path="src/utils/responseHandler.ts">
+import { Response } from "express";
+
+interface ApiResponse<T> {
+    success: boolean,
+    message: string,
+    data?: T,
+}
+
+export function validResponse<T>(res: Response, statusCode: number = 200, message: string, data?: T) : void {
+    const responseBody : ApiResponse<T> = {
+        success: true,
+        message: message,
+    }
+
+    if (data !== undefined) {
+        responseBody.data = data;
+    }
+
+    res.status(statusCode).json(responseBody);
+    return;
+}
+
+export function successResponse<T>(res: Response, message: string, data?: T) : void {
+    validResponse(res, 200, message, data);
+}
+
+export function createResponse<T>(res: Response, message: string, data?: T) : void {
+    validResponse(res, 201, message, data);
+}
+
+export function deleteResponse<T>(res: Response, message: string) : void {
+    validResponse(res, 204, message, undefined);
+}
+</file>
+
+<file path="src/validators/auth/login.schema.ts">
+import {z} from "zod";
+import { emailSchema } from "../fields/email.schema";
+import {loginPasswordSchema } from "../fields/password.schema";
+
+export const loginSchema = z
+    .object({
+        body : z.object({
+            email : emailSchema,
+            password :loginPasswordSchema,
+        }),
+    })
+
+export type LoginInput = z.infer<typeof loginSchema>;
+</file>
+
+<file path="src/validators/auth/register.schema.ts">
+import {z} from "zod";
+import { emailSchema } from "../fields/email.schema";
+import { registerPasswordSchema } from "../fields/password.schema";
+import { nameSchema } from "../fields/name.schema";
+
+export const registerSchema = z
+    .object({
+        body : z.object({
+            name : nameSchema,
+            email : emailSchema,
+            password : registerPasswordSchema,
+        }),
+    });
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+</file>
+
+<file path="src/validators/blog/blogId.schema.ts">
+import z from "zod";
+import { objectIdSchema } from "../fields/objectId.schema";
+
+export const blogIdSchema = z
+    .object({
+        id : objectIdSchema,
+    })
+
+export type BlogIdInput = z.infer<typeof blogIdSchema>;
+</file>
+
+<file path="src/validators/blog/createBlog.schema.ts">
+import z from "zod";
+import { titleSchema } from "../fields/title.schema";
+import { contentSchema } from "../fields/content.schema";
+import { imageUrlSchema } from "../fields/image.schema";
+import { objectIdSchema } from "../fields/objectId.schema";
+
+export const createBlogSchema = z
+    .object({
+        title : titleSchema,
+        content : contentSchema,
+        imageUrl : imageUrlSchema,
+        authorId : objectIdSchema.optional(),
+    })
+
+export type CreateBLogInput = z.infer<typeof createBlogSchema>;
+</file>
+
+<file path="src/validators/blog/deleteBlog.schema.ts">
+import z from "zod";
+import { objectIdSchema } from "../fields/objectId.schema";
+
+export const deleteBlogSchema = z
+    .object({
+        blog_Id : objectIdSchema,
+        user_Id : objectIdSchema.optional(),
+    });
+
+export type DeleteBlogInput = z.infer<typeof deleteBlogSchema>;
+</file>
+
+<file path="src/validators/blog/updateBlog.schema.ts">
+import z from "zod";
+import { titleSchema } from "../fields/title.schema";
+import { contentSchema } from "../fields/content.schema";
+import { objectIdSchema } from "../fields/objectId.schema";
+import { imageUrlSchema } from "../fields/image.schema";
+
+export const updateBlogSchema = z
+    .object({
+            blog_Id : objectIdSchema,
+            user_Id : objectIdSchema,
+            title : titleSchema, 
+            content : contentSchema,
+            imageUrl : imageUrlSchema.optional(),
+            fileName : z.string().optional(),
+    })
+
+export type UpdateBlogInput = z.infer<typeof updateBlogSchema>;
+</file>
+
+<file path="src/validators/fields/content.schema.ts">
+import z from "zod";
+
+export const contentSchema = z
+    .string()
+    .trim()
+    .min(10, "Content must be at least 10 characters long");
+</file>
+
+<file path="src/validators/fields/email.schema.ts">
+import {z} from "zod";
+
+export const emailSchema = z
+    .email({message : "Invalid Email"})
+    .pipe(
+        z.string()
+        .trim()
+        .min(1, {message : "Email field is required"})
+        .toLowerCase()
+);
+</file>
+
+<file path="src/validators/fields/image.schema.ts">
+import z from "zod";
+
+export const imageSchema = z
+    .object({
+        mimetype : z
+            .enum([
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/webp",
+            ]),
+            size : z
+                .number()
+                .max(5*1024*1024),
+    })
+    .optional();
+
+export const imageUrlSchema = z
+    .string()
+    .optional();
+</file>
+
+<file path="src/validators/fields/name.schema.ts">
+import {z} from "zod";
+
+export const nameSchema = z
+    .string()
+    .trim()
+    .min(3, "Name must be at least 3 characters")
+    .max(50, "Name cannot exceed 50 characters");
+</file>
+
+<file path="src/validators/fields/objectId.schema.ts">
+import {z} from "zod";
+
+export const objectIdSchema = z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid Blog Id");
+</file>
+
+<file path="src/validators/fields/password.schema.ts">
+import { z } from "zod";
+
+export const registerPasswordSchema = z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(50, "Password cannot exceed 50 characters")
+    .regex(/[A-Z]/, "Password must contain at least 1 uppercase character")
+    .regex(/[a-z]/, "Password must contain at least 1 lowercase character")
+    .regex(/[0-9]/, "Password must contain at least 1 digit")
+    .regex(/[!@#$%^&*]/, "Password must contain at least 1 special character");
+
+export const loginPasswordSchema = z
+    .string()
+    .min(1, "Password is required");
+</file>
+
+<file path="src/validators/fields/title.schema.ts">
+import z from "zod";
+
+export const titleSchema = z
+    .string()
+    .trim()
+    .min(3, "Title must be at least 3 characters long")
+    .max(150, "Title cannot exceed 150 characters");
+</file>
+
+<file path="src/app.ts">
+import express, { Application } from "express";
+import dotenv from "dotenv";
+dotenv.config();
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger";
+import authRoutes from "./routes/authRoutes";
+import blogRoutes from "./routes/blogRoutes";
+import morgan from "morgan";
+import cors from "cors";
+import { errorHandler } from "./middleware/errorMiddleware";
+import { requestLogger } from "./middleware/requestLogger";
+
+const app : Application = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use(requestLogger);
+
+app.use("/api/auth", authRoutes);
+app.use("/api/blogs", blogRoutes);
+
+app.use(errorHandler);
+
+export default app;
+</file>
+
+<file path="src/config/database.ts">
+import mongoose from 'mongoose';
+import { MongoError } from '../errors/MongoError';
+import { env } from './env';
+
+export const connectDB = async (): Promise<void> => {
+  const mongoURI = env.MONGODB_URI;
+  if (!mongoURI) {
+    throw new MongoError(
+      "MONGODB_URI not defined in the environment variables "
+    );
+  }
+  await mongoose.connect(mongoURI);
+  process.on('SIGINT', async () => {
+    await mongoose.connection.close();
+    process.exit(0);
+  });
+}
+
+export const disconnectDB = async (): Promise<void> => {
+  await mongoose.connection.close();
+}
+</file>
+
+<file path="src/config/env.ts">
+export function envExists(value: string | undefined, key: string) : string {
+
+    if (!value || value.trim().length === 0) 
+        throw new Error(`Environment variable missing: ${key}`);
+
+    return value;
+}
+
+export const env = {
+    PORT : envExists(process.env.PORT, "PORT"),
+    JWT_SECRET : envExists(process.env.JWT_SECRET, "JWT_SECRET"),
+    MONGODB_URI : envExists(process.env.MONGODB_URI, "MONGODB_URI"),
+};
+</file>
+
+<file path="src/errors/ValidationError.ts">
+import AppError from "./AppError";
+
+export class ValidationError extends AppError {
+
+  constructor(message: string) {
+    super(message, 400);
+  }
+}
+
+export default ValidationError;
+</file>
+
+<file path="src/middleware/errorMiddleware.ts">
+import type { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import AppError from "../errors/AppError";
+import { logger } from "../config/pinoLogger";
+
+export const errorHandler : ErrorRequestHandler = (err, req, res, next) => {
+    
+    logger.error({
+        error : err,
+        route : req.originalUrl,
+        method: req.method,
+    }, "Request Failed");
+    
+    if (err instanceof AppError) {
+        res.status(err.statusCode).json({
+            success: false,
+            message: JSON.parse(err.message),
+        });
+        return;
+    }
+    
+    res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+    });
+    return;
+}
+</file>
+
+<file path="src/models/Blog.ts">
+import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+
+export interface IBlog extends Document {
+  title: string,
+  content: string,
+  imageUrl?: string,
+  author: Types.ObjectId,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+const BlogSchema: Schema<IBlog> = new Schema<IBlog>(
+  {
+    title: { type: String, required: true, trim: true },
+    content: { type: String, required: true },
+    imageUrl: { type: String },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true, },
+  },
+  { timestamps: true }
+);
+
+export const Blog: Model<IBlog> = mongoose.model<IBlog>("Blog", BlogSchema);
+
+export default Blog;
+</file>
+
+<file path="src/seedTestingData/seedDatabase.ts">
+import 'dotenv/config'
+;import {faker} from "@faker-js/faker";
+import bcrypt from "bcrypt";
+import UserRepository from "../repositories/UserRepository";
+import { BlogRepository } from "../repositories/BlogRepository";
+import mongoose from "mongoose";
+import User from "../models/User";
+import { Blog } from "../models/Blog";
+import { connectDB, disconnectDB } from "../config/database";
+import fs from "fs";
+
+export interface SeedUser {
+    _id : mongoose.Types.ObjectId,
+    name : string,
+    email : string,
+    password : string,
+}
+
+export interface SeedBlog {
+    title : string,
+    content : string,
+    imageUrl? : string,
+    author? : string,
+}
+
+const userCount = 150;
+const blogCountForEachUser = 50;
+
+export function createRandomUser() : SeedUser{
+    const _id = new mongoose.Types.ObjectId(); 
+    const name = faker.person.fullName();
+    const email = faker.internet.email();
+    const password = faker.internet.password({
+        length : 12,
+        memorable : false,
+        pattern : /[A-Za-z0-9!@#$%^&*]/,
+    });
+    return {
+        _id,
+        name,
+        email,
+        password,
+    }
+}
+
+export function createRandomBlog() : SeedBlog {
+    return {
+        title : faker.lorem.sentence({min : 4, max : 8}),
+        content : faker.lorem.paragraphs(5, '\n\n'),
+    }
+}
+
+export function generateRandomUsers(count: number) : SeedUser[] {
+    const users = faker.helpers.multiple(createRandomUser, {count});
+    return users;
+}
+
+export function generateRandomBlogs(count: number) : SeedBlog[] {
+    const blogs = faker.helpers.multiple(createRandomBlog, {count});
+    return blogs;
+}
+
+async function saveUsersJson(users : SeedUser[]) {
+    await fs.promises.writeFile("users.json", JSON.stringify(users, null, 2));
+}
+
+export async function insertMultipleSeedUsers(users : SeedUser[]) {
+    await Promise.all(
+        users.map (user => insertSingleSeedUser(user))
+    );
+}
+
+export async function insertSingleSeedUser(user : SeedUser){
+    const passwordHash = await bcrypt.hash(user.password, 10);
+    const created = await UserRepository.createUser({
+        _id : user._id,
+        name : user.name,
+        email : user.email,
+        passwordHash : passwordHash,
+    });
+    return created;
+}
+
+export async function insertSeedBlogs(users : SeedUser[]) {
+    for (const user of users) {
+        const blogs = generateRandomBlogs(blogCountForEachUser);
+        for (const blog of blogs) {
+            blog.author = String(user._id);
+        }
+        await insertManySeedBLogs(blogs);
+    }
+}
+
+export async function insertManySeedBLogs(blogs : SeedBlog[]) {
+    await BlogRepository.createMultipleBlogs(blogs);
+}
+
+export async function clearDatabase() {
+    try {
+        await Promise.all([
+          User.deleteMany({}),
+          Blog.deleteMany({})
+        ]);
+    } catch (error) {
+        console.error("Error Clearing Database: ", error);
+    }
+}
+
+export async function seedDatabase() {
+    const users = generateRandomUsers(userCount);
+    try {
+        await connectDB();
+        //await clearDatabase();
+        await insertMultipleSeedUsers(users);
+        await saveUsersJson(users);
+        //await insertSeedBlogs(users);
+        console.log("Database seeded");
+    } catch (error) {
+        console.error("Error while seeding databse: ", error);
+        throw error;
+    } finally {
+        await disconnectDB();
+    }
+}
+</file>
+
+<file path="src/services/AuthUser.ts">
+import bcrypt from "bcrypt";
+import UserRepository from "../repositories/UserRepository";
+import { UserRegistrationRequest, UserLoginRequest, UserDatabaseDetails } from "../config/userRequestInterface";
+import AuthenticationError from "../errors/AuthenticationError";
+import { jwtSign } from "./jwtSignature";
+
+const salt = 10;
+
+export const AuthUser = {
+
+    register : async function (data : UserRegistrationRequest) {
+        const {password, ...userDetails} = data;
+        const passwordHash = await bcrypt.hash(password, salt);
+        const hashedData = {...userDetails, passwordHash};
+        const user = await UserRepository.createUser(hashedData);
+        const userData : UserDatabaseDetails = {
+            user_Id : String(user._id),
+            name : user.name,
+            email : user.email,
+        }
+
+        const token = jwtSign(userData);
+        return {user, token};
+    },
+
+    login : async function (data : UserLoginRequest) {
+        const user = await UserRepository.findUserByEmail(data.email);
+        
+        if (!user) 
+            throw new AuthenticationError("Invalid Credentials");
+
+        const ok = await bcrypt.compare(data.password, user.passwordHash);
+
+        if (!ok) 
+            throw new AuthenticationError("Invalid Credentials");
+
+        const userData : UserDatabaseDetails = {
+            user_Id : String(user._id),
+            name : user.name,
+            email : user.email,
+        }
+
+        const token = jwtSign(userData);
+
+        return {user, token};
+    }
+
+};
+</file>
+
+<file path="src/services/BlogServices.ts">
+import { BlogUpdateRequest } from "../config/blogRequestInterface";
+import AuthorizationError from "../errors/AuthorizationError";
+import { NotFoundError } from "../errors/NotFoundError";
+import { BlogRepository } from "../repositories/BlogRepository"
+import { BlogIdInput } from "../validators/blog/blogId.schema";
+import { CreateBLogInput } from "../validators/blog/createBlog.schema";
+import { DeleteBlogInput } from "../validators/blog/deleteBlog.schema";
+import { UpdateBlogInput } from "../validators/blog/updateBlog.schema";
+
+export const BlogServices = {
+
+    blogCreation : async function (data : CreateBLogInput) {
+        const blog = await BlogRepository.createBlog(data);
+        return blog;
+    },
+
+    fetchBlogs : async function () {
+        const blogs = await BlogRepository.getBlogs();
+        return blogs;
+    },
+
+    fetchBlogById : async function (blogIdRequest : BlogIdInput) {
+        const blog = await BlogRepository.getBlogById(blogIdRequest.id);
+        if (!blog) 
+            throw new NotFoundError("Blog not found");
+        return blog;
+    },
+
+    updateBlogById : async function (data : UpdateBlogInput) {
+        const blog = await BlogRepository.getBlogById(data.blog_Id);
+        if (!blog) 
+            throw new NotFoundError("Blog not found");
+        if (blog.author.toString() !== data.user_Id)
+            throw new AuthorizationError("Access Forbidden");
+        blog.title = data.title;
+        blog.content = data.content;
+        if (data.imageUrl) {
+            blog.imageUrl = `/uploads/${data.fileName}`;
+        }
+        await BlogRepository.saveBlog(blog);
+        return blog;
+    },
+
+    deleteBlogById : async function (data : DeleteBlogInput) {
+        const blog = await BlogRepository.getBlogById(data.blog_Id);
+        if (!blog) 
+            throw new NotFoundError("Blog not found");
+        if (blog.author.toString() !== data.user_Id)
+            throw new AuthorizationError("Access Forbidden");
+        const deletedBlog = await BlogRepository.deleteBlog(data.blog_Id, data.user_Id)
+        return deletedBlog;
+    }
+
+}
+</file>
+
+<file path="src/utils/uploader.ts">
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { Request } from "express";
+
+const uploadsDir = path.join(process.cwd(), "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req : Request, _file, cb) => {
+    cb(null, uploadsDir)
+  },
+  filename: (_req : Request, file, cb) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname);
+    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+  },
+});
+
+function imageFileFilter(_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+  if (/^image\//.test(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image uploads are allowed"));
+  }
+}
+
+export const upload = multer({
+  storage,
+  fileFilter: imageFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+export default upload;
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "node"
+    ],
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "oldVersions"
+  ]
+}
+</file>
+
+<file path="src/config/swagger.ts">
+import swaggerJsDoc from 'swagger-jsdoc';
+import { env } from "./env";
+
+const PORT = env.PORT;
+
+const options: swaggerJsDoc.Options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "BLOG API",
+      version: "1.0.0",
+      description: "Blog API Project (Basic CRUD using Node JS + TypeScript)"
+    },
+    servers: [{ url: `http://localhost:${PORT}` }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
+  },
+  apis: ["./src/routes/*.ts"],
+};
+
+export const swaggerSpec = swaggerJsDoc(options);
+
+export default swaggerSpec;
+</file>
+
+<file path="src/repositories/BlogRepository.ts">
+import Blog, { IBlog } from "../models/Blog";
+
+export const BlogRepository = {
+    createBlog : async function(data : any) {
+        const blog = await Blog.create({...data});
+        return blog;
+    },
+
+    createMultipleBlogs : async function(data: any) {
+        const blogs = await Blog.insertMany(data);
+        return blogs;
+    },
+
+    getBlogs : async function() {
+        const blogs = await Blog.find()
+            .populate('author', 'name email')
+            .sort({ createdAt: -1 });
+        return blogs;
+    },
+
+    getBlogById : async function (id : string) {
+        const blog = await Blog.findById(id).populate("author", "name email");
+        return blog;
+    },
+
+    saveBlog : async function (blog : IBlog) {
+        await blog.save();
+        return blog;
+    },
+
+    deleteBlog : async function (id : string, userId : string) {
+        const deletedBlog = await Blog.findByIdAndDelete(id);
+        return deletedBlog;
+    }
+}
+</file>
+
+<file path="src/server.ts">
+import app from "./app";
+import { connectDB, disconnectDB } from "./config/database";
+import { logger } from "./config/pinoLogger";
+import { env } from "./config/env";
+
+const PORT = env.PORT;
+
+const startServer = async() => {
+    try {
+        await connectDB();
+        logger.info("Database connection established");
+
+        app.listen(PORT, () => {
+            logger.info(`Server listening at http://localhost:${PORT}`);
+        })
+    } catch (error) {
+        logger.error(error);
+        process.exit(1);
+    }
+}
+
+startServer();
+</file>
+
+<file path="src/middleware/auth.ts">
+import type { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import AuthenticationError from '../errors/AuthenticationError';
+import { env } from '../config/env';
+
+export interface AuthRequest extends Request {
+  userId? : string,
+}
+
+export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) : any {
+  const header = req.headers["authorization"];
+  if (!header || !header.startsWith("Bearer")) 
+    throw new AuthenticationError("User not Authenticated");
+  
+  const token = header.slice('Bearer'.length).trim();
+  
+  const secret = env.JWT_SECRET;
+  
+  if (!secret) 
+    throw new Error("Internal Server Error");
+  const payload = jwt.verify(token, secret) as { userId: string };
+  
+  req.userId = payload.userId;
+  next();
+  return;
+}
+
+export default requireAuth;
+</file>
+
+<file path=".gitignore">
+.env
+node_modules/
+repomix-output.xml
+users.json
+saveSeedUsers.ts
+simulationCodebase.xml
+oldVersions/
+oldVersions/validations/
+oldVersions/validations/middlewares
+simulation_logs/
+</file>
+
+<file path="src/routes/authRoutes.ts">
+import { Router } from 'express';
+import { register, login } from '../controllers/authControllers';
+import { asyncHandler } from '../utils/asyncHandler';
+import { validate } from '../middleware/validate.middleware';
+import { registerSchema } from '../validators/auth/register.schema';
+import { loginSchema } from '../validators/auth/login.schema';
+
+const router : Router = Router();
+
+/**
+ * @openapi
+ *
+ * /api/auth/register:
+ *   post:
+ *      summary: Register a new user
+ *      tags: [Auth]
+ *      requestBody: 
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                    type: object
+ *                    required: [name, email, password]
+ *                    properties: 
+ *                      name: 
+ *                        type: string
+ *                      email:
+ *                        type: string
+ *                      password: 
+ *                        type: string
+ *      responses: 
+ *        201: 
+ *          description: Created
+ *        400: 
+ *          description: Missing Fields
+ *        409:
+ *          description: Email Already Registered
+* */
+router.post("/register", validate(registerSchema), asyncHandler(register));
+
+/**
+ * @openapi
+ *
+ * /api/auth/login:
+ *   post:
+ *      summary: User Login
+ *      tags: [Auth]
+ *      requestBody: 
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                    type: object
+ *                    required: [email, password]
+ *                    properties: 
+ *                      email:
+ *                        type: string
+ *                      password: 
+ *                        type: string
+ *      responses: 
+ *        200: 
+ *          description: User Logged In
+ *        401: 
+ *          description: Invalid Credentials
+* */
+router.post("/login", validate(loginSchema), asyncHandler(login));
+
+export default router;
+</file>
+
+<file path="src/routes/blogRoutes.ts">
+import { Router } from "express";
+import { createBlog, listBlogs, getBlog, updateBlog, deleteBlog } from "../controllers/blogControllers";
+import { requireAuth } from "../middleware/auth";
+import upload from "../utils/uploader";
+import { asyncHandler } from "../utils/asyncHandler";
+import { updateBlogSchema } from "../validators/blog/updateBlog.schema";
+import { validate } from "../middleware/validate.middleware";
+import { createBlogSchema } from "../validators/blog/createBlog.schema";
+
+const router: Router = Router();
+
+/**
+ * @openapi
+ * /api/blogs:
+ *  post:
+ *      summary: Create a blog (auth required)
+ *      tags: [Blogs]
+ *      security:
+ *          - bearerAuth: []
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              multipart/form-data:
+ *                  schema:
+ *                      type: object
+ *                      required: [title, content]
+ *                      properties:
+ *                          title:
+ *                              type: string
+ *                          content:
+ *                              type: string
+ *                          image:
+ *                              type: string
+ *                              format: binary
+ *      responses:
+ *          201: 
+ *              description: Created
+ *          401: 
+ *              description: Unauthorized
+ */
+router.post("/", asyncHandler(requireAuth), upload.single("image"), validate(createBlogSchema), asyncHandler(createBlog));
+
+/**
+ * @openapi
+ * /api/blogs:
+ *  get:
+ *      summary: List blogs
+ *      tags: [Blogs]
+ *      responses:
+ *          200: 
+ *              description: OK
+ */
+router.get("/", asyncHandler(listBlogs));
+
+/**
+ * @openapi
+ * /api/blogs/{id}:
+ *  get:
+ *      summary: Get a blog by ID
+ *      tags: [Blogs]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              type: string
+ *      responses:
+ *          200: 
+ *              description: OK
+ *          404: 
+ *              description: Not Found
+ */
+router.get("/:id", asyncHandler(getBlog));
+
+/**
+ * @openapi
+ * /api/blogs/{id}:
+ *  put:
+ *      summary: Update a blog (auth required)
+ *      tags: [Blogs]
+ *      security:
+ *          - bearerAuth: []
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              type: string
+ *      requestBody:
+ *          required: false
+ *          content:
+ *              multipart/form-data:
+ *                  schema:
+ *                      type: object
+ *                      required: [title, content]
+ *                      properties:
+ *                          title:
+ *                              type: string
+ *                          content:
+ *                              type: string
+ *                          image:
+ *                              type: string
+ *                              format: binary
+ *      responses:
+ *          200: 
+ *              description: OK
+ *          401: 
+ *              description: Unauthorized
+ *          403:
+ *              description: Access Forbidden
+ */
+router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validate(updateBlogSchema), asyncHandler(updateBlog));
+
+/** 
+ * @openapi
+ * /api/blogs/{id}:
+ *  delete:
+ *      summary: Delete a blog by ID (Auth required)
+ *      tags: [Blogs]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              type: string
+ *      responses:
+ *          204: 
+ *              description: Dleted
+ *          403: 
+ *              description: Access Forbidden
+ *          404: 
+ *              description: Not Found
+ *          500:
+ *              description: Internal Server Error
+ */
+router.delete("/:id", asyncHandler(requireAuth), asyncHandler(deleteBlog));
+
+export default router;
+</file>
+
+<file path="src/controllers/authControllers.ts">
+import type { NextFunction, Request, Response } from 'express';
+import { createResponse, successResponse } from '../utils/responseHandler';
+import { AuthUser } from '../services/AuthUser';
+
+// register a new user
+export async function register(req: Request, res: Response, next: NextFunction) : Promise<any> {
+  const { name, email, password } = req.body as {
+    name: string,
+    email: string,
+    password: string
+  }
+
+  const {user, token} = await AuthUser.register({name, email, password});
+
+  createResponse(res, "User registered successfully", { token, user: { id: String(user._id), name, email } });
+}
+
+export async function login(req: Request, res: Response, next: NextFunction) : Promise<any> {
+  const { email, password } = req.body as {
+    email: string,
+    password: string
+  };
+
+  const {user, token} = await AuthUser.login({email, password});
+
+  successResponse(res, "Log In successfull", {token, user: { id: String(user._id), name: user.name, email: user.email }});
+}
+
+export default { register, login };
+</file>
+
+<file path="src/controllers/blogControllers.ts">
+import type { NextFunction, Response } from "express";
+import { AuthRequest } from "../middleware/auth";
+import { createResponse, deleteResponse, successResponse } from "../utils/responseHandler";
+import { BlogServices } from "../services/BlogServices";
+
+export async function createBlog(req: AuthRequest, res: Response) : Promise<any> {
+  
+  const { title, content } = req.body as { title: string, content: string };
+  
+  const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+  
+  const blogData = {
+    title,
+    content,
+    imageUrl,
+    author: req.userId,
+  };
+
+  const blog = await BlogServices.blogCreation(blogData);
+  
+  createResponse(res, "Blog Created Successfully", {blog});
+}
+
+// List Blog
+export async function listBlogs(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
+  
+  const blogs = await BlogServices.fetchBlogs();
+  
+  successResponse(res, "Blogs fetched successfully", {blogs});
+}
+
+// Get Blog by Id
+export async function getBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
+  
+  const { id } = req.params as {id: string};
+  const blog = await BlogServices.fetchBlogById({id});
+  
+  successResponse(res, "Blog fetched successfully", {blog});
+}
+
+// Update Blog
+export async function updateBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
+  
+  const { id } = req.params as { id: string };
+  const { title, content } = req.body as { title: string, content: string };
+  let imageUrl;
+  if (req.file)
+    imageUrl = `/uploads/${req.file.filename}`;
+  const updateData = {
+    blog_Id : id,
+    user_Id : req.userId!,
+    title, 
+    content,
+    imageUrl,
+    fileName : req.file?.filename,
+  };
+  const blog = await BlogServices.updateBlogById(updateData);
+  successResponse(res, "Blog updated successfully", {blog});
+}
+
+// Delete Blog
+export async function deleteBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
+  
+  const { id : blog_Id } = req.params as { id: string };
+  const user_Id  = req.userId;
+  const deleteData = {blog_Id, user_Id};  
+  const deletedBlog = await BlogServices.deleteBlogById(deleteData);
+  deleteResponse(res, "Blog deleted successfully");
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "simulate": "ts-node src/simulation/runner.ts",
+    "seedDatabase": "ts-node src/seedTestingData/seedRunner.ts",
+    "dev": "nodemon --watch src --ext ts,js, --exec \"ts-node src/server.ts\"",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "@types/bcrypt": "6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "5.0.6",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "25.9.1",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "nodemon": "3.1.14",
+    "pino-pretty": "^13.1.3",
+    "repomix": "^1.14.0",
+    "swagger-jsdoc": "6.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3"
+  },
+  "dependencies": {
+    "@types/multer": "^2.1.0",
+    "@types/pino": "^7.0.4",
+    "bcrypt": "6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "5.2.1",
+    "jsonwebtoken": "9.0.3",
+    "mongoose": "9.6.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.1.1",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "zod": "^4.4.3"
+  },
+  "overrides": {
+    "picomatch": "^4.0.1"
+  }
+}
+</file>
+
+</files>
