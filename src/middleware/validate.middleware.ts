@@ -5,6 +5,7 @@ import ValidationError from "../errors/ValidationError";
 export const validate = (schema : ZodTypeAny) => {
     return (req: Request, res : Response, next : NextFunction) => {
         try {
+            console.log("Validation for Create Blog");
             schema.parse({
                 body : req.body,
                 params : req.params,
@@ -15,11 +16,10 @@ export const validate = (schema : ZodTypeAny) => {
         } catch (error) {
             if (error instanceof ZodError) {
                 throw new ValidationError(
-                    JSON.stringify(
                         error.issues.map(issue => ({
                             field : issue.path.join("."),
                             message : issue.message,
-                        }))
+                        })
                     )
                 );
             }

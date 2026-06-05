@@ -13,10 +13,12 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
+// Middlwares and Logger Import
 import { errorHandler } from "./middleware/errorMiddleware";
 import { requestLogger } from "./middleware/requestLogger";
 import { successResponse } from "./utils/responseHandler";
-import { rateLimitErrorFunction } from "./errors/RateLimitError";
+
+// Configurations Import
 import { env } from "./config/env";
 import { corsOptions } from "./config/CorsOptions";
 
@@ -34,8 +36,8 @@ app.route("/health").get((req, res) => {
     successResponse(res, "Server process is running");
 })
 
-app.use("/api/auth", authRoutes);
-app.use("/api/blogs", blogRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/blogs", blogRoutes);
 
 app.use(errorHandler);
 

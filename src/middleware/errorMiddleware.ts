@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import AppError from "../errors/AppError";
 import { logger } from "../config/pinoLogger";
+import ValidationError from "../errors/ValidationError";
 
 export const errorHandler : ErrorRequestHandler = (err, req, res, next) => {
     
@@ -8,12 +9,22 @@ export const errorHandler : ErrorRequestHandler = (err, req, res, next) => {
         error : err,
         route : req.originalUrl,
         method: req.method,
+        message : err.message,
+        stack : err.stack
     }, "Request Failed");
     
+    if (err instanceof ValidationError) {
+        res.status(err.statusCode).json({
+            success: false,
+            message: err.message,
+            errors : err.errors,
+        });
+        return;
+    }
     if (err instanceof AppError) {
         res.status(err.statusCode).json({
             success: false,
-            message: JSON.parse(err.message),
+            message: (err.message),
         });
         return;
     }

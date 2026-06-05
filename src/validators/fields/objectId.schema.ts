@@ -3,3 +3,6 @@ import {z} from "zod";
 export const objectIdSchema = z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid Blog Id");
+export const authorIdSchema = z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid Author Id");

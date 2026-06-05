@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { createResponse, successResponse } from '../utils/responseHandler';
 import { AuthUser } from '../services/AuthUser';
+import ConflictError from '../errors/ConflictError';
 
 // register a new user
 export async function register(req: Request, res: Response, next: NextFunction) : Promise<any> {
@@ -9,6 +10,10 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     email: string,
     password: string
   }
+
+  const existingEmail = await AuthUser.findEmail(req.body.email);
+  if (existingEmail)
+    throw new ConflictError("Email already registered");
 
   const {user, token} = await AuthUser.register({name, email, password});
 

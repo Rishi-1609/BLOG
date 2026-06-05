@@ -7,3 +7,7 @@ export const blogIdSchema = z
     })
 
 export type BlogIdInput = z.infer<typeof blogIdSchema>;
+
+export const WrapperBlogIdSchema = z.object({
+    params : blogIdSchema,
+});

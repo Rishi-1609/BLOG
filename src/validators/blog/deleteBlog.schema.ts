@@ -4,7 +4,6 @@ import { objectIdSchema } from "../fields/objectId.schema";
 export const deleteBlogSchema = z
     .object({
         blog_Id : objectIdSchema,
-        user_Id : objectIdSchema.optional(),
     });
 
 export type DeleteBlogInput = z.infer<typeof deleteBlogSchema>;

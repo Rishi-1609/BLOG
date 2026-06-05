@@ -21,6 +21,7 @@ const storage = multer.diskStorage({
 });
 
 function imageFileFilter(_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+  console.log("Image Checking");
   if (/^image\//.test(file.mimetype)) {
     cb(null, true);
   } else {

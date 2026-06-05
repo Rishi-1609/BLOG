@@ -1,4 +1,4 @@
-export interface BlogUpdateRequest {
+export interface BlogUpdateDTO {
     blog_Id : string,
     user_Id : string,
     title : string, 

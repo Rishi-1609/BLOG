@@ -43,6 +43,16 @@ export const AuthUser = {
         const token = jwtSign(userData);
 
         return {user, token};
+    },
+
+    findEmail : async function(email : string) {
+        const emailFound = await UserRepository.findUserByEmail(email);
+        return emailFound;
+    },
+
+    findUserId : async function(user_Id : string) {
+        const idFound = await UserRepository.findUserById(user_Id);
+        return idFound;
     }
 
 };

@@ -3,11 +3,12 @@ import { createBlog, listBlogs, getBlog, updateBlog, deleteBlog } from "../contr
 import { requireAuth } from "../middleware/auth";
 import upload from "../utils/uploader";
 import { asyncHandler } from "../utils/asyncHandler";
-import { updateBlogSchema } from "../validators/blog/updateBlog.schema";
+import { WrapperUpdateBlogSchema } from "../validators/blog/updateBlog.schema";
 import { validate } from "../middleware/validate.middleware";
-import { createBlogSchema } from "../validators/blog/createBlog.schema";
+import { WrapperCreateBlogSchema } from "../validators/blog/createBlog.schema";
 import rateLimit from "express-rate-limit";
-import { rateLimitErrorFunction } from "../errors/RateLimitError";
+import { validateQuery } from "../middleware/validations/validateQuery";
+import { WrapperBlogIdSchema } from "../validators/blog/blogId.schema";
 
 const router: Router = Router();
 
@@ -23,7 +24,7 @@ router.use(limiter);
 
 /**
  * @openapi
- * /api/blogs:
+ * /api/v1/blogs:
  *  post:
  *      summary: Create a blog (auth required)
  *      tags: [Blogs]
@@ -50,11 +51,11 @@ router.use(limiter);
  *          401: 
  *              description: Unauthorized
  */
-router.post("/", asyncHandler(requireAuth), upload.single("image"), validate(createBlogSchema), asyncHandler(createBlog));
+router.post("/", asyncHandler(requireAuth), upload.single("image"), validate(WrapperCreateBlogSchema), asyncHandler(createBlog));
 
 /**
  * @openapi
- * /api/blogs:
+ * /api/v1/blogs:
  *  get:
  *      summary: List blogs
  *      tags: [Blogs]
@@ -62,11 +63,11 @@ router.post("/", asyncHandler(requireAuth), upload.single("image"), validate(cre
  *          200: 
  *              description: OK
  */
-router.get("/", asyncHandler(listBlogs));
+router.get("/", validateQuery(), asyncHandler(listBlogs));
 
 /**
  * @openapi
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *  get:
  *      summary: Get a blog by ID
  *      tags: [Blogs]
@@ -82,11 +83,11 @@ router.get("/", asyncHandler(listBlogs));
  *          404: 
  *              description: Not Found
  */
-router.get("/:id", asyncHandler(getBlog));
+router.get("/:id", validate(WrapperBlogIdSchema), asyncHandler(getBlog));
 
 /**
  * @openapi
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *  put:
  *      summary: Update a blog (auth required)
  *      tags: [Blogs]
@@ -121,11 +122,11 @@ router.get("/:id", asyncHandler(getBlog));
  *          403:
  *              description: Access Forbidden
  */
-router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validate(updateBlogSchema), asyncHandler(updateBlog));
+router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validate(WrapperUpdateBlogSchema), asyncHandler(updateBlog));
 
 /** 
  * @openapi
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *  delete:
  *      summary: Delete a blog by ID (Auth required)
  *      tags: [Blogs]
@@ -145,6 +146,6 @@ router.put("/:id", asyncHandler(requireAuth), upload.single("image"), validate(u
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/:id", asyncHandler(requireAuth), asyncHandler(deleteBlog));
+router.delete("/:id", asyncHandler(requireAuth), validate(WrapperBlogIdSchema), asyncHandler(deleteBlog));
 
 export default router;

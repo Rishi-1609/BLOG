@@ -2,6 +2,7 @@ import type { NextFunction, Response } from "express";
 import { AuthRequest } from "../middleware/auth";
 import { createResponse, deleteResponse, successResponse } from "../utils/responseHandler";
 import { BlogServices } from "../services/BlogServices";
+import { querySchema } from "../utils/BlogQueryDTO";
 
 export async function createBlog(req: AuthRequest, res: Response) : Promise<any> {
   
@@ -13,7 +14,7 @@ export async function createBlog(req: AuthRequest, res: Response) : Promise<any>
     title,
     content,
     imageUrl,
-    author: req.userId,
+    author: req.user_Id!,
   };
 
   const blog = await BlogServices.blogCreation(blogData);
@@ -24,16 +25,18 @@ export async function createBlog(req: AuthRequest, res: Response) : Promise<any>
 // List Blog
 export async function listBlogs(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
   
-  const blogs = await BlogServices.fetchBlogs();
   
-  successResponse(res, "Blogs fetched successfully", {blogs});
+  const queryParams = querySchema.parse(req.query);
+  const blogs = await BlogServices.fetchBlogs(queryParams);
+  
+  successResponse(res, "Blogs fetched successfully", blogs);
 }
 
 // Get Blog by Id
 export async function getBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
   
   const { id } = req.params as {id: string};
-  const blog = await BlogServices.fetchBlogById({id});
+  const blog = await BlogServices.fetchBlogById({blog_Id : id});
   
   successResponse(res, "Blog fetched successfully", {blog});
 }
@@ -48,7 +51,7 @@ export async function updateBlog(req: AuthRequest, res: Response, next: NextFunc
     imageUrl = `/uploads/${req.file.filename}`;
   const updateData = {
     blog_Id : id,
-    user_Id : req.userId!,
+    user_Id : req.user_Id!,
     title, 
     content,
     imageUrl,
@@ -62,7 +65,7 @@ export async function updateBlog(req: AuthRequest, res: Response, next: NextFunc
 export async function deleteBlog(req: AuthRequest, res: Response, next: NextFunction) : Promise<any> {
   
   const { id : blog_Id } = req.params as { id: string };
-  const user_Id  = req.userId;
+  const user_Id  = req.user_Id!;
   const deleteData = {blog_Id, user_Id};  
   const deletedBlog = await BlogServices.deleteBlogById(deleteData);
   deleteResponse(res, "Blog deleted successfully");

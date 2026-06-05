@@ -5,8 +5,6 @@ import { validate } from '../middleware/validate.middleware';
 import { registerSchema } from '../validators/auth/register.schema';
 import { loginSchema } from '../validators/auth/login.schema';
 import rateLimit from 'express-rate-limit';
-import { rateLimitErrorFunction } from '../errors/RateLimitError';
-import { success } from 'zod';
 
 const router : Router = Router();
 
@@ -27,7 +25,7 @@ router.use(limiter);
 /**
  * @openapi
  *
- * /api/auth/register:
+ * /api/v1/auth/register:
  *   post:
  *      summary: Register a new user
  *      tags: [Auth]
@@ -58,7 +56,7 @@ router.post("/register", validate(registerSchema), asyncHandler(register));
 /**
  * @openapi
  *
- * /api/auth/login:
+ * /api/v1/auth/login:
  *   post:
  *      summary: User Login
  *      tags: [Auth]
